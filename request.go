@@ -14,7 +14,7 @@ func (r *Request) Set(key string, data interface{}) {
 }
 
 func (r *Request) Get(key string) interface{} {
-	r.ses.Get(r.Message.FromUserName, key)
+	return r.ses.Get(r.Message.FromUserName, key)
 }
 
 func (r *Request) Remove(key string) {
