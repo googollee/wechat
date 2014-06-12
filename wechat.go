@@ -6,25 +6,18 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"regexp"
 	"sort"
 	"strings"
 )
 
-type TextHandler func(w Response, r *Request)
-
-type textNode struct {
-	reg     *regexp.Regexp
-	handler TextHandler
-}
-
 type Wechat struct {
-	token     string
-	appId     string
-	appSecret string
-	ses       Session
-	log       *log.Logger
-	textNodes []textNode
+	token      string
+	appId      string
+	appSecret  string
+	ses        Session
+	log        *log.Logger
+	textNodes  []textNode
+	eventNodes []eventNode
 }
 
 func New(token, appId, appSecret string) *Wechat {
@@ -49,15 +42,6 @@ func (wc *Wechat) SetSession(ses Session) {
 	wc.ses = ses
 }
 
-func (wc *Wechat) Text(pattern string, handler TextHandler) error {
-	reg, err := regexp.Compile(pattern)
-	if err != nil {
-		return err
-	}
-	wc.textNodes = append(wc.textNodes, textNode{reg, handler})
-	return nil
-}
-
 func (wc *Wechat) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
@@ -75,6 +59,8 @@ func (wc *Wechat) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		switch msg.MsgType {
 		case MsgText:
 			wc.handleTextMessage(resp, req)
+		case MsgEvent:
+			wc.handleEventMessage(resp, req)
 		}
 	}
 
@@ -112,13 +98,4 @@ func (wc *Wechat) checkSignature(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/plain")
 	w.Write([]byte(echostr))
-}
-
-func (wc *Wechat) handleTextMessage(resp Response, req *Request) {
-	for _, node := range wc.textNodes {
-		if node.reg.MatchString(req.Message.Content) {
-			node.handler(resp, req)
-			return
-		}
-	}
 }

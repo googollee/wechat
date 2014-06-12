@@ -53,7 +53,7 @@ type Message struct {
 	Scale     float64
 	Label     string
 
-	Event    string
+	Event    EventType
 	EventKey string
 	Ticket   string
 
