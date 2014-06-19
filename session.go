@@ -44,7 +44,7 @@ func (ses *session) Get(user, key string) interface{} {
 	if !ok {
 		return nil
 	}
-	if (storage.lastModified + int64(ses.duration)) < time.Now().Unix() {
+	if (storage.lastModified + int64(ses.duration/time.Second)) < time.Now().Unix() {
 		delete(ses.storages, user)
 		return nil
 	}
