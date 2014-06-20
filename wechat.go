@@ -60,7 +60,6 @@ func (wc *Wechat) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			wc.log.Printf("decode body error: %s", err)
 			return
 		}
-		wc.log.Printf("msg: %#v", msg)
 		req, resp := wc.getRequestResponse(w, msg)
 		switch msg.MsgType {
 		case MsgText:
