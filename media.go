@@ -1,7 +1,6 @@
 package wechat
 
 import (
-	"io"
 	"net/url"
 )
 
