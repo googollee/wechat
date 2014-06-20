@@ -8,16 +8,21 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"sync"
 )
 
 type Wechat struct {
-	token      string
-	appId      string
-	appSecret  string
-	ses        Session
-	log        *log.Logger
-	textNodes  []textNode
-	eventNodes []eventNode
+	token             string
+	appId             string
+	appSecret         string
+	ses               Session
+	accessTokenLocker sync.Mutex
+	accessToken       string
+	accessExpiresAt   int64
+	log               *log.Logger
+	textNodes         []textNode
+	eventNodes        []eventNode
+	voiceNode         voiceNode
 }
 
 func New(token, appId, appSecret string) *Wechat {
@@ -61,6 +66,8 @@ func (wc *Wechat) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			wc.handleTextMessage(resp, req)
 		case MsgEvent:
 			wc.handleEventMessage(resp, req)
+		case MsgVideo:
+			wc.handleVoiceMessage(resp, req)
 		}
 	}
 
