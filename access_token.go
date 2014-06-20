@@ -19,7 +19,7 @@ func (wc *Wechat) getAccessToken() (string, error) {
 	defer wc.accessTokenLocker.Unlock()
 
 	now := time.Now().Unix()
-	if wc.accessExpiresAt < now {
+	if wc.accessExpiresAt > now {
 		return wc.accessToken, nil
 	}
 	query := make(url.Values)
