@@ -1,6 +1,8 @@
 package wechat
 
 import (
+	"bytes"
+	"encoding/json"
 	"regexp"
 )
 
@@ -27,4 +29,29 @@ func (wc *Wechat) handleTextMessage(resp Response, req *Request) {
 			return
 		}
 	}
+}
+
+func (wc *Wechat) SendTextMessage(to, text string) error {
+	type Message struct {
+		ToUser  string `json:"touser"`
+		MsgType MsgType
+		Text    struct {
+			Content string `json:"content"`
+		} `json:text"`
+	}
+	msg := Message{
+		ToUser:  to,
+		MsgType: MsgText,
+	}
+	msg.Text.Content = text
+	buf := bytes.NewBuffer(nil)
+	e := json.NewEncoder(buf)
+	if err := e.Encode(msg); err != nil {
+		return err
+	}
+	var resp Error
+	if err := wc.HttpRequest("POST", "https://api.weixin.qq.com/cgi-bin/message/custom/send", nil, buf, &resp); err != nil {
+		return err
+	}
+	return nil
 }
