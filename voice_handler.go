@@ -12,5 +12,8 @@ func (wc *Wechat) Voice(handler VoiceHandler) error {
 }
 
 func (wc *Wechat) handleVoiceMessage(resp Response, req *Request) {
+	if wc.voiceNode.handler == nil {
+		return
+	}
 	wc.voiceNode.handler(resp, req)
 }
