@@ -33,11 +33,11 @@ func (wc *Wechat) handleTextMessage(resp Response, req *Request) {
 
 func (wc *Wechat) SendTextMessage(to, text string) error {
 	type Message struct {
-		ToUser  string `json:"touser"`
-		MsgType MsgType
+		ToUser  string  `json:"touser"`
+		MsgType MsgType `json:"msgtype"`
 		Text    struct {
 			Content string `json:"content"`
-		} `json:text"`
+		} `json:"text"`
 	}
 	msg := Message{
 		ToUser:  to,
