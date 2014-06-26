@@ -53,5 +53,8 @@ func (wc *Wechat) SendTextMessage(to, text string) error {
 	if err := wc.HttpRequest("POST", "https://api.weixin.qq.com/cgi-bin/message/custom/send", nil, buf, &resp); err != nil {
 		return err
 	}
+	if resp.Code != 0 {
+		return resp
+	}
 	return nil
 }

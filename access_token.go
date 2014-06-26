@@ -51,12 +51,12 @@ func (wc *Wechat) getAccessToken() (string, error) {
 }
 
 type Error struct {
-	code int    `json:"errcode"`
-	msg  string `json:"errmsg"`
+	Code int    `json:"errcode"`
+	Msg  string `json:"errmsg"`
 }
 
 func (e Error) Error() string {
-	return fmt.Sprintf("(%d)%s", e.code, e.msg)
+	return fmt.Sprintf("(%d)%s", e.Code, e.Msg)
 }
 
 func (wc *Wechat) HttpRequest(method, urlStr string, query url.Values, body io.Reader, resp interface{}) error {
